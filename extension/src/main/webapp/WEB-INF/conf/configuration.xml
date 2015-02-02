@@ -178,4 +178,6 @@
   <!-- Answers and FAQ core services -->
   <import>war:/conf/answers-ext/faq-configuration.xml</import>
 
+  <import>war:/ks-extension/ks/portal-configuration.xml</import>
+
 </configuration>
