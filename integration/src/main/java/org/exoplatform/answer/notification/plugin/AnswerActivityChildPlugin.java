@@ -22,8 +22,10 @@ import org.exoplatform.commons.api.notification.model.NotificationInfo;
 import org.exoplatform.commons.api.notification.plugin.AbstractNotificationChildPlugin;
 import org.exoplatform.commons.api.notification.service.template.TemplateContext;
 import org.exoplatform.commons.notification.template.TemplateUtils;
+import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
+import org.exoplatform.social.core.manager.ActivityManager;
 
 public class AnswerActivityChildPlugin extends AbstractNotificationChildPlugin {
 
@@ -43,11 +45,17 @@ public class AnswerActivityChildPlugin extends AbstractNotificationChildPlugin {
       TemplateContext templateContext = new TemplateContext(ID, language);
 
       String activityId = notification.getValueOwnerParameter(ForumNotificationUtils.ACTIVITY_ID.getKey());
-      activity = ForumActivityUtils.getActivityManager().getActivity(activityId);
+      ActivityManager activityManager = ForumActivityUtils.getActivityManager();
+      activity = activityManager.getActivity(activityId);
+      String activityUrl;
       if (activity.isComment()) {
-        activity = ForumActivityUtils.getActivityManager().getParentActivity(activity);
+        activity = activityManager.getParentActivity(activity);
+        activityUrl = CommonsUtils.getCurrentDomain() + activity.getTemplateParams().get("Link");
+      } else {
+        activityUrl = activity.getTemplateParams().get("Link");
       }
       templateContext.put("ACTIVITY", activity.getTitle());
+      templateContext.put("ACTIVITY_URL", activityUrl);
       //
       String content = TemplateUtils.processGroovy(templateContext);
       return content;
