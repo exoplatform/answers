@@ -29,6 +29,7 @@ import org.exoplatform.answer.webui.UIAnswersContainer;
 import org.exoplatform.answer.webui.UIAnswersPortlet;
 import org.exoplatform.answer.webui.UIQuestions;
 import org.exoplatform.answer.webui.ValidatorDataInput;
+import org.exoplatform.commons.utils.HTMLSanitizer;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.faq.service.FAQSetting;
 import org.exoplatform.faq.service.FileAttachment;
@@ -561,8 +562,8 @@ public class UIQuestionForm extends BaseUIFAQForm implements UIPopupComponent {
             questionForm.mapLanguage.get(language).setState(QuestionLanguage.DELETE);
           }
         }
-        questionDetail = StringEscapeUtils.unescapeHtml4(questionDetail);
-        questionDetail = CommonUtils.encodeSpecialCharInSearchTerm(questionDetail);
+        //--- Sanitize HTML content to avoid XSS injection
+        questionDetail = HTMLSanitizer.sanitize(questionDetail);
         questionContent = CommonUtils.encodeSpecialCharInTitle(questionContent);
 
         Question question = questionForm.getQuestion();
