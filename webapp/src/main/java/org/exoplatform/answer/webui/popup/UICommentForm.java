@@ -23,6 +23,7 @@ import org.exoplatform.answer.webui.UIAnswersContainer;
 import org.exoplatform.answer.webui.UIAnswersPortlet;
 import org.exoplatform.answer.webui.UIQuestions;
 import org.exoplatform.answer.webui.ValidatorDataInput;
+import org.exoplatform.commons.utils.HTMLSanitizer;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.faq.service.Comment;
 import org.exoplatform.faq.service.FAQSetting;
@@ -157,7 +158,7 @@ public class UICommentForm extends BaseUIFAQForm implements UIPopupComponent {
       UIAnswersPortlet portlet = commentForm.getAncestorOfType(UIAnswersPortlet.class);
       UIAnswersContainer answersContainer = portlet.getChild(UIAnswersContainer.class);
       UIQuestions questions = answersContainer.getChild(UIQuestions.class);
-      comment = CommonUtils.encodeSpecialCharInSearchTerm(comment);
+      comment = HTMLSanitizer.sanitize(comment);
       try {
         commentForm.question_.setLink(FAQUtils.getQuestionURL(commentForm.question_.getId(), false));
         //
