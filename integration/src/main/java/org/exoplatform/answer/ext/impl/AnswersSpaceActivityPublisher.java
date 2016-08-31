@@ -55,7 +55,7 @@ import org.exoplatform.social.core.space.spi.SpaceService;
 public class AnswersSpaceActivityPublisher extends AnswerEventListener {
 
   public static final String SPACE_APP_ID       = "ks-answer:spaces";
-  public static final String ANSWER_APP_ID      = "answer:spaces";
+  public static final String ANSWER_APP_ID      = "ks-answer:spaces";
   public static final String QUESTION_ID        = "Id";
   public static final String LINK_KEY           = "Link";
   public static final String LANGUAGE_KEY       = "Language";
