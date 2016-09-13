@@ -8,7 +8,7 @@
   </parent>
   <artifactId>answers-services</artifactId>
   <packaging>jar</packaging>
-  <name>FAQ service</name>
+  <name>eXo Add-on:: FAQ service</name>
   <dependencies>
     <dependency>
       <groupId>org.exoplatform.commons</groupId>

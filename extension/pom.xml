@@ -8,7 +8,7 @@
   </parent>
   <artifactId>answers-extension-config</artifactId>
   <packaging>war</packaging>
-  <name>Answers Extension configuration war</name>
+  <name>eXo Add-on:: Answers Extension configuration war</name>
   <build>
     <finalName>answers-extension</finalName>
   </build>

@@ -8,7 +8,7 @@
   </parent>
   <artifactId>answers-portlets</artifactId>
   <packaging>war</packaging>
-  <name>Answers portlets</name>
+  <name>eXo Add-on:: Answers portlets</name>
 
   <dependencies>
     <dependency>

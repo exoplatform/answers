@@ -30,7 +30,7 @@
   </parent>
   <artifactId>answers-packaging</artifactId>
   <packaging>pom</packaging>
-  <name>Answers add-on Packaging</name>
+  <name>eXo Add-on:: Answers add-on Packaging</name>
   <description>The Answers add-on packaging</description>
 
   <dependencies>

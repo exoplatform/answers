@@ -8,7 +8,7 @@
   </parent>
   <artifactId>answers-plf-integration</artifactId>
   <packaging>jar</packaging>
-  <name>Answers activity integration</name>
+  <name>eXo Add-on:: Answers activity integration</name>
   <description>Answers activity integration</description>
   <dependencies>
     <dependency>

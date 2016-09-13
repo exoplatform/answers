@@ -8,7 +8,7 @@
   </parent>
   <artifactId>answers-data-injector</artifactId>
   <packaging>jar</packaging>
-  <name>Answers Injectors</name>
+  <name>eXo Add-on:: Answers Injectors</name>
   <description>Answers Injectors</description>
   <dependencies>
 <!--     <dependency>
