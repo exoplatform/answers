@@ -174,6 +174,9 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
           ExoSocialActivity oldActivity = activityM.getActivity(activityId);
           activityM.deleteActivity(oldActivity);
           Identity userIdentity = identityM.getOrCreateIdentity(OrganizationIdentityProvider.NAME, question.getAuthor(), false);
+          if (userIdentity == null) {
+            LOG.warn("Failed to move questions : userIdentity = null");
+          }else{
           ExoSocialActivity activity = newActivity(userIdentity, question.getQuestion(), questionDetail, templateParams);
           streamOwner = streamOwner != null ? streamOwner : userIdentity;
           activityM.saveActivityNoReturn(streamOwner, activity);
@@ -203,7 +206,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
             faqS.saveActivityIdForComment(questionId, cm.getId(), question.getLanguage(), comment.getId());
           }
         }
-      } catch (Exception e) {
+      }} catch (Exception e) {
         LOG.error("Failed to move questions " + e.getMessage());
       }
     }
@@ -218,6 +221,10 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
       FAQService faqS = (FAQService) exoContainer.getComponentInstanceOfType(FAQService.class);
       Question question = faqS.getQuestionById(questionId);
       Identity userIdentity = identityM.getOrCreateIdentity(OrganizationIdentityProvider.NAME,answer.getResponseBy(),false);
+      if (userIdentity == null) {
+        LOG.warn("Can not record Activity for space when post answer : userIdentity = null");
+      }
+      else{
       String activityId = faqS.getActivityIdForQuestion(questionId);
       
       //
@@ -276,7 +283,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
         }
         activityM.saveComment(activity, comment);
       }
-    } catch (Exception e) { // FQAService
+    }} catch (Exception e) { // FQAService
       LOG.error("Can not record Activity for space when post answer ", e);
     }
   }
@@ -291,6 +298,9 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
       Question question = faqS.getQuestionById(questionId);
       String message = ActivityUtils.processContent(cm.getComments());
       Identity userIdentity = identityM.getOrCreateIdentity(OrganizationIdentityProvider.NAME, cm.getCommentBy(), false);
+      if (userIdentity == null) {
+        LOG.warn("Can not record Activity for space when post comment : userIdentity = null");
+      } else {
       String activityId = faqS.getActivityIdForQuestion(questionId);
       if (activityId != null) {
         try {
@@ -337,7 +347,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
         comment.setTemplateParams(commentTemplateParams);
         activityM.saveComment(activity, comment);
       }
-    } catch (Exception e) { //FQAService      
+    }} catch (Exception e) { //FQAService      
       LOG.error("Can not record Activity for space when post comment ", e);
     }
 
@@ -351,6 +361,9 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
       ActivityManager activityM = (ActivityManager) exoContainer.getComponentInstanceOfType(ActivityManager.class);
       FAQService faqS = (FAQService) exoContainer.getComponentInstanceOfType(FAQService.class);
       Identity userIdentity = identityM.getOrCreateIdentity(OrganizationIdentityProvider.NAME,question.getAuthor(),false);
+      if (userIdentity == null) {
+        LOG.warn("Can not record Activity for space when add new question : userIdentity = null");
+      } else {
       Map<String, String> templateParams = updateTemplateParams(new HashMap<String, String>(), question.getId(),
                                                                 ActivityUtils.getQuestionRate(question),
                                                                 ActivityUtils.getNbOfAnswers(question),
@@ -409,7 +422,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
           }
         }
       }
-    } catch (Exception e) { // FQAService
+    }} catch (Exception e) { // FQAService
       LOG.error("Can not record Activity for space when add new question ", e);
     }
   }
