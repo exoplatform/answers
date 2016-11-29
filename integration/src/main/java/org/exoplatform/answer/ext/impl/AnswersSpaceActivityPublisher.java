@@ -175,8 +175,9 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
           activityM.deleteActivity(oldActivity);
           Identity userIdentity = identityM.getOrCreateIdentity(OrganizationIdentityProvider.NAME, question.getAuthor(), false);
           if (userIdentity == null) {
-            LOG.warn("Failed to move questions : userIdentity = null");
-          }else{
+            LOG.warn("Question " + questionId + " cannot be moved because identity of the user " + question.getAuthor()
+                + " does not exist");
+          } else {
           ExoSocialActivity activity = newActivity(userIdentity, question.getQuestion(), questionDetail, templateParams);
           streamOwner = streamOwner != null ? streamOwner : userIdentity;
           activityM.saveActivityNoReturn(streamOwner, activity);
@@ -204,9 +205,10 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
             activityM.updateActivity(activity);
             activityM.saveComment(activity, comment);
             faqS.saveActivityIdForComment(questionId, cm.getId(), question.getLanguage(), comment.getId());
+            }
           }
         }
-      }} catch (Exception e) {
+      } catch (Exception e) {
         LOG.error("Failed to move questions " + e.getMessage());
       }
     }
@@ -222,9 +224,9 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
       Question question = faqS.getQuestionById(questionId);
       Identity userIdentity = identityM.getOrCreateIdentity(OrganizationIdentityProvider.NAME,answer.getResponseBy(),false);
       if (userIdentity == null) {
-        LOG.warn("Can not record Activity for space when post answer : userIdentity = null");
-      }
-      else{
+        LOG.warn("Can not record Activity for space when post answer because identity of the user " + question.getAuthor()
+            + " does not exist");
+      } else {
       String activityId = faqS.getActivityIdForQuestion(questionId);
       
       //
@@ -282,8 +284,9 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
           updateCommentTemplateParms(comment, answer.getId());
         }
         activityM.saveComment(activity, comment);
+        }
       }
-    }} catch (Exception e) { // FQAService
+    } catch (Exception e) { // FQAService
       LOG.error("Can not record Activity for space when post answer ", e);
     }
   }
@@ -299,7 +302,8 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
       String message = ActivityUtils.processContent(cm.getComments());
       Identity userIdentity = identityM.getOrCreateIdentity(OrganizationIdentityProvider.NAME, cm.getCommentBy(), false);
       if (userIdentity == null) {
-        LOG.warn("Can not record Activity for space when post comment : userIdentity = null");
+        LOG.warn("Can not record Activity for space when post comment because identity of the user " + question.getAuthor()
+            + " does not exist");
       } else {
       String activityId = faqS.getActivityIdForQuestion(questionId);
       if (activityId != null) {
@@ -346,8 +350,9 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
         comment.setTitle(message);
         comment.setTemplateParams(commentTemplateParams);
         activityM.saveComment(activity, comment);
+        }
       }
-    }} catch (Exception e) { //FQAService      
+    } catch (Exception e) { // FQAService    
       LOG.error("Can not record Activity for space when post comment ", e);
     }
 
@@ -362,7 +367,8 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
       FAQService faqS = (FAQService) exoContainer.getComponentInstanceOfType(FAQService.class);
       Identity userIdentity = identityM.getOrCreateIdentity(OrganizationIdentityProvider.NAME,question.getAuthor(),false);
       if (userIdentity == null) {
-        LOG.warn("Can not record Activity for space when add new question : userIdentity = null");
+        LOG.warn("Can not record Activity for space when add new question because identity of the user " + question.getAuthor()
+            + " does not exist");
       } else {
       Map<String, String> templateParams = updateTemplateParams(new HashMap<String, String>(), question.getId(),
                                                                 ActivityUtils.getQuestionRate(question),
@@ -419,10 +425,11 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
           ExoSocialActivity comment = createCommentWhenUpdateQuestion(userIdentity, question);
           if (!"".equals(comment.getTitle())) {
             activityM.saveComment(activity, comment);
+            }
           }
         }
       }
-    }} catch (Exception e) { // FQAService
+    } catch (Exception e) { // FQAService
       LOG.error("Can not record Activity for space when add new question ", e);
     }
   }
