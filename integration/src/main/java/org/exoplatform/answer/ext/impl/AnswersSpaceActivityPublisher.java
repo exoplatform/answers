@@ -178,33 +178,33 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
             LOG.warn("Question " + questionId + " cannot be moved because identity of the user " + question.getAuthor()
                 + " does not exist");
           } else {
-          ExoSocialActivity activity = newActivity(userIdentity, question.getQuestion(), questionDetail, templateParams);
-          streamOwner = streamOwner != null ? streamOwner : userIdentity;
-          activityM.saveActivityNoReturn(streamOwner, activity);
-          faqS.saveActivityIdForQuestion(questionId, activity.getId());
-          for (Answer answer : question.getAnswers()) {
-            ExoSocialActivity comment = createCommentForAnswer(userIdentity, answer);
-            String answerContent = ActivityUtils.processContent(answer.getResponses());
-            comment.setTitle("Answer has been submitted: " + answerContent);
-            I18NActivityUtils.addResourceKey(comment, "answer-add", answerContent);
-            updateActivity(activity, question);
-            activityM.updateActivity(activity);
-            updateCommentTemplateParms(comment, answer.getId());
-            activityM.saveComment(activity, comment);
-            faqS.saveActivityIdForAnswer(questionId, answer, comment.getId());
-          }
-          for (Comment cm : question.getComments()) {
-            String message = ActivityUtils.processContent(cm.getComments());
-            ExoSocialActivityImpl comment = new ExoSocialActivityImpl();
-            Map<String, String> commentTemplateParams = new HashMap<String, String>();
-            commentTemplateParams.put(LINK_KEY, cm.getId());
-            comment.setTemplateParams(commentTemplateParams);
-            comment.setTitle(message);
-            comment.setUserId(userIdentity.getId());
-            updateActivity(activity, question);
-            activityM.updateActivity(activity);
-            activityM.saveComment(activity, comment);
-            faqS.saveActivityIdForComment(questionId, cm.getId(), question.getLanguage(), comment.getId());
+            ExoSocialActivity activity = newActivity(userIdentity, question.getQuestion(), questionDetail, templateParams);
+            streamOwner = streamOwner != null ? streamOwner : userIdentity;
+            activityM.saveActivityNoReturn(streamOwner, activity);
+            faqS.saveActivityIdForQuestion(questionId, activity.getId());
+            for (Answer answer : question.getAnswers()) {
+              ExoSocialActivity comment = createCommentForAnswer(userIdentity, answer);
+              String answerContent = ActivityUtils.processContent(answer.getResponses());
+              comment.setTitle("Answer has been submitted: " + answerContent);
+              I18NActivityUtils.addResourceKey(comment, "answer-add", answerContent);
+              updateActivity(activity, question);
+              activityM.updateActivity(activity);
+              updateCommentTemplateParms(comment, answer.getId());
+              activityM.saveComment(activity, comment);
+              faqS.saveActivityIdForAnswer(questionId, answer, comment.getId());
+            }
+            for (Comment cm : question.getComments()) {
+              String message = ActivityUtils.processContent(cm.getComments());
+              ExoSocialActivityImpl comment = new ExoSocialActivityImpl();
+              Map<String, String> commentTemplateParams = new HashMap<String, String>();
+              commentTemplateParams.put(LINK_KEY, cm.getId());
+              comment.setTemplateParams(commentTemplateParams);
+              comment.setTitle(message);
+              comment.setUserId(userIdentity.getId());
+              updateActivity(activity, question);
+              activityM.updateActivity(activity);
+              activityM.saveComment(activity, comment);
+              faqS.saveActivityIdForComment(questionId, cm.getId(), question.getLanguage(), comment.getId());
             }
           }
         }
@@ -227,63 +227,64 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
         LOG.warn("Can not record Activity for space when post answer because identity of the user " + question.getAuthor()
             + " does not exist");
       } else {
-      String activityId = faqS.getActivityIdForQuestion(questionId);
-      
-      //
-      String answerContent = ActivityUtils.processContent(answer.getResponses());
-      
-      if (activityId != null && answer.getApprovedAnswers()) {
-        try {
-          ExoSocialActivity activity = activityM.getActivity(activityId);
-          ExoSocialActivity comment = createCommentForAnswer(userIdentity, answer);
-          
-          if (!comment.getTitle().equals("")) { //Case update answer or promote comment to answer
-            String promotedAnswer = "Comment "+answerContent+" has been promoted as an answer";
-            if (promotedAnswer.equals(comment.getTitle())) {
-              //promote a comment to an answer
-              updateCommentTemplateParms(comment, answer.getId());
-              activityM.saveComment(activity, comment);
-              faqS.saveActivityIdForAnswer(questionId, answer, comment.getId());
-              
-              //update question activity content
+        String activityId = faqS.getActivityIdForQuestion(questionId);
+
+        //
+        String answerContent = ActivityUtils.processContent(answer.getResponses());
+
+        if (activityId != null && answer.getApprovedAnswers()) {
+          try {
+            ExoSocialActivity activity = activityM.getActivity(activityId);
+            ExoSocialActivity comment = createCommentForAnswer(userIdentity, answer);
+
+            if (!comment.getTitle().equals("")) { // Case update answer or
+                                                  // promote comment to answer
+              String promotedAnswer = "Comment " + answerContent + " has been promoted as an answer";
+              if (promotedAnswer.equals(comment.getTitle())) {
+                // promote a comment to an answer
+                updateCommentTemplateParms(comment, answer.getId());
+                activityM.saveComment(activity, comment);
+                faqS.saveActivityIdForAnswer(questionId, answer, comment.getId());
+
+                // update question activity content
+                updateActivity(activity, question);
+                activityM.updateActivity(activity);
+              } else {
+                // update answer
+                activityM.saveComment(activity, comment);
+                String answerActivityId = faqS.getActivityIdForAnswer(questionId, answer);
+                faqS.saveActivityIdForAnswer(questionId, answer, answerActivityId + "," + comment.getId());
+              }
+            } else {
+              // Case submit new answer
+              comment.setTitle("Answer has been submitted: " + answerContent);
+              I18NActivityUtils.addResourceKey(comment, "answer-add", answerContent);
+
               updateActivity(activity, question);
               activityM.updateActivity(activity);
-            } else {
-              //update answer
+
+              updateCommentTemplateParms(comment, answer.getId());
               activityM.saveComment(activity, comment);
-              String answerActivityId = faqS.getActivityIdForAnswer(questionId, answer);
-              faqS.saveActivityIdForAnswer(questionId, answer, answerActivityId+","+comment.getId());
+
+              faqS.saveActivityIdForAnswer(questionId, answer, comment.getId());
             }
-          } else {
-            //Case submit new answer
+
+          } catch (Exception e) {
+            LOG.debug("Run in case of activity deleted and reupdate");
+            activityId = null;
+          }
+        }
+        if (activityId == null) {
+          saveQuestion(question, false);
+          String newActivityId = faqS.getActivityIdForQuestion(question.getId());
+          ExoSocialActivity activity = activityM.getActivity(newActivityId);
+          ExoSocialActivity comment = createCommentForAnswer(userIdentity, answer);
+          if (comment.getTitle().equals("")) {
             comment.setTitle("Answer has been submitted: " + answerContent);
             I18NActivityUtils.addResourceKey(comment, "answer-add", answerContent);
-            
-            updateActivity(activity, question);
-            activityM.updateActivity(activity);
-            
             updateCommentTemplateParms(comment, answer.getId());
-            activityM.saveComment(activity, comment);
-            
-            faqS.saveActivityIdForAnswer(questionId, answer, comment.getId());
           }
-          
-        } catch (Exception e) {
-          LOG.debug("Run in case of activity deleted and reupdate");
-          activityId = null;
-        }
-      }
-      if (activityId == null) {
-        saveQuestion(question, false);
-        String newActivityId = faqS.getActivityIdForQuestion(question.getId());
-        ExoSocialActivity activity = activityM.getActivity(newActivityId);
-        ExoSocialActivity comment = createCommentForAnswer(userIdentity, answer);
-        if (comment.getTitle().equals("")) {
-          comment.setTitle("Answer has been submitted: " + answerContent);
-          I18NActivityUtils.addResourceKey(comment, "answer-add", answerContent);
-          updateCommentTemplateParms(comment, answer.getId());
-        }
-        activityM.saveComment(activity, comment);
+          activityM.saveComment(activity, comment);
         }
       }
     } catch (Exception e) { // FQAService
@@ -305,54 +306,55 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
         LOG.warn("Can not record Activity for space when post comment because identity of the user " + question.getAuthor()
             + " does not exist");
       } else {
-      String activityId = faqS.getActivityIdForQuestion(questionId);
-      if (activityId != null) {
-        try {
-          ExoSocialActivity activity = activityM.getActivity(activityId);
-          ExoSocialActivityImpl comment = new ExoSocialActivityImpl();
-          String commentActivityId = faqS.getActivityIdForComment(questionId, cm.getId(), language);
+        String activityId = faqS.getActivityIdForQuestion(questionId);
+        if (activityId != null) {
+          try {
+            ExoSocialActivity activity = activityM.getActivity(activityId);
+            ExoSocialActivityImpl comment = new ExoSocialActivityImpl();
+            String commentActivityId = faqS.getActivityIdForComment(questionId, cm.getId(), language);
+            Map<String, String> commentTemplateParams = new HashMap<String, String>();
+            commentTemplateParams.put(LINK_KEY, cm.getId());
+            if (commentActivityId != null) { // try to update activity's comment
+              ExoSocialActivityImpl oldComment = (ExoSocialActivityImpl) activityM.getActivity(commentActivityId);
+              if (oldComment != null) {
+                comment = oldComment;
+                comment.setTitle(message);
+                comment.setTitleId("update-comment");
+                activityM.updateActivity(comment);
+              } else {
+                commentActivityId = null;
+              }
+            }
+            if (commentActivityId == null) { // create new activity's comment
+              comment.setTemplateParams(commentTemplateParams);
+              comment.setTitle(message);
+              comment.setTitleId("add-comment");
+              comment.setUserId(userIdentity.getId());
+              updateActivity(activity, question);
+              activityM.updateActivity(activity);
+              activityM.saveComment(activity, comment);
+              faqS.saveActivityIdForComment(questionId, cm.getId(), language, comment.getId());
+            }
+          } catch (Exception e) {
+            LOG.debug("Run in case of activity deleted and reupdate");
+            activityId = null;
+          }
+        }
+        if (activityId == null) { // Create new activity for the question and
+                                  // add new comment
+          saveQuestion(question, false);
+          String newActivityId = faqS.getActivityIdForQuestion(questionId);
+          ExoSocialActivity activity = activityM.getActivity(newActivityId);
+          ExoSocialActivity comment = new ExoSocialActivityImpl();
+          comment.setUserId(userIdentity.getId());
           Map<String, String> commentTemplateParams = new HashMap<String, String>();
           commentTemplateParams.put(LINK_KEY, cm.getId());
-          if (commentActivityId != null) { //try to update activity's comment
-            ExoSocialActivityImpl oldComment = (ExoSocialActivityImpl) activityM.getActivity(commentActivityId);
-            if (oldComment != null) {
-              comment = oldComment;
-              comment.setTitle(message);
-              comment.setTitleId("update-comment");
-              activityM.updateActivity(comment);
-            } else {
-              commentActivityId = null;
-            }
-          }
-          if (commentActivityId == null) { //create new activity's comment
-            comment.setTemplateParams(commentTemplateParams);
-            comment.setTitle(message);
-            comment.setTitleId("add-comment");
-            comment.setUserId(userIdentity.getId());
-            updateActivity(activity, question);
-            activityM.updateActivity(activity);
-            activityM.saveComment(activity, comment);
-            faqS.saveActivityIdForComment(questionId, cm.getId(), language, comment.getId());
-          }
-        } catch (Exception e) {
-          LOG.debug("Run in case of activity deleted and reupdate");
-          activityId = null;
-        }
-      } 
-      if (activityId == null) { //Create new activity for the question and add new comment
-        saveQuestion(question, false);
-        String newActivityId = faqS.getActivityIdForQuestion(questionId);
-        ExoSocialActivity activity = activityM.getActivity(newActivityId);
-        ExoSocialActivity comment = new ExoSocialActivityImpl();
-        comment.setUserId(userIdentity.getId());
-        Map<String, String> commentTemplateParams = new HashMap<String, String>();
-        commentTemplateParams.put(LINK_KEY, cm.getId());
-        comment.setTitle(message);
-        comment.setTemplateParams(commentTemplateParams);
-        activityM.saveComment(activity, comment);
+          comment.setTitle(message);
+          comment.setTemplateParams(commentTemplateParams);
+          activityM.saveComment(activity, comment);
         }
       }
-    } catch (Exception e) { // FQAService    
+    } catch (Exception e) { // FQAService
       LOG.error("Can not record Activity for space when post comment ", e);
     }
 
@@ -370,61 +372,64 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
         LOG.warn("Can not record Activity for space when add new question because identity of the user " + question.getAuthor()
             + " does not exist");
       } else {
-      Map<String, String> templateParams = updateTemplateParams(new HashMap<String, String>(), question.getId(),
-                                                                ActivityUtils.getQuestionRate(question),
-                                                                ActivityUtils.getNbOfAnswers(question),
-                                                                ActivityUtils.getNbOfComments(question),
-                                                                question.getLanguage(), question.getLink(),
-                                                                Utils.getQuestionPoint(question));
-      String activityId = faqS.getActivityIdForQuestion(question.getId());
-      
-      String questionDetail = ActivityUtils.processContent(question.getDetail());
-      //in case deleted activity, if isUpdate, we will re-create new activity and add a comment associated
-      boolean isUpdate = false;
-      // UserHelper.checkValueUser(values)
-      if (activityId != null) {
-        isUpdate = true;
-        try {
-          ExoSocialActivity activity = activityM.getActivity(activityId);
-          if (UserHelper.getUserByUserId(question.getAuthor()) == null) {
-            userIdentity = identityM.getIdentity(activity.getPosterId(), false);
-          }
-          activity.setTitle(CommonUtils.decodeSpecialCharToHTMLnumber(question.getQuestion()));
-          activity.setBody(questionDetail);
-          activity.setTemplateParams(templateParams);
-          activityM.updateActivity(activity);
+        Map<String, String> templateParams = updateTemplateParams(new HashMap<String, String>(),
+                                                                  question.getId(),
+                                                                  ActivityUtils.getQuestionRate(question),
+                                                                  ActivityUtils.getNbOfAnswers(question),
+                                                                  ActivityUtils.getNbOfComments(question),
+                                                                  question.getLanguage(),
+                                                                  question.getLink(),
+                                                                  Utils.getQuestionPoint(question));
+        String activityId = faqS.getActivityIdForQuestion(question.getId());
 
-          ExoSocialActivity comment = createCommentWhenUpdateQuestion(userIdentity, question);
-          if (!"".equals(comment.getTitle())) {
-            activityM.saveComment(activity, comment);
-          }
-        } catch (Exception e) {
-          LOG.debug("Run in case of activity deleted and reupdate");
-          activityId = null;
-        }
-      }
-      if (activityId == null) {
-        Identity streamOwner = null;
-        String catId = (String) faqS.readQuestionProperty(question.getId(), FAQNodeTypes.EXO_CATEGORY_ID, String.class);
-        Identity spaceIdentity = getSpaceIdentity(catId);
-        if (spaceIdentity != null) {
-          // publish the activity in the space stream.
-          streamOwner = spaceIdentity;
-          templateParams.put(SPACE_GROUP_ID, ActivityUtils.getSpaceGroupId(catId));
-        }
-        List<String> categoryIds = faqS.getCategoryPath(catId);
-        Collections.reverse(categoryIds);
-        if (streamOwner == null) {
-          streamOwner = userIdentity;
-        }
-        ExoSocialActivity activity = newActivity(userIdentity, question.getQuestion(), questionDetail, templateParams);
-        activityM.saveActivityNoReturn(streamOwner, activity);
-        faqS.saveActivityIdForQuestion(question.getId(), activity.getId());
+        String questionDetail = ActivityUtils.processContent(question.getDetail());
+        // in case deleted activity, if isUpdate, we will re-create new activity
+        // and add a comment associated
+        boolean isUpdate = false;
+        // UserHelper.checkValueUser(values)
+        if (activityId != null) {
+          isUpdate = true;
+          try {
+            ExoSocialActivity activity = activityM.getActivity(activityId);
+            if (UserHelper.getUserByUserId(question.getAuthor()) == null) {
+              userIdentity = identityM.getIdentity(activity.getPosterId(), false);
+            }
+            activity.setTitle(CommonUtils.decodeSpecialCharToHTMLnumber(question.getQuestion()));
+            activity.setBody(questionDetail);
+            activity.setTemplateParams(templateParams);
+            activityM.updateActivity(activity);
 
-        if (isUpdate) {
-          ExoSocialActivity comment = createCommentWhenUpdateQuestion(userIdentity, question);
-          if (!"".equals(comment.getTitle())) {
-            activityM.saveComment(activity, comment);
+            ExoSocialActivity comment = createCommentWhenUpdateQuestion(userIdentity, question);
+            if (!"".equals(comment.getTitle())) {
+              activityM.saveComment(activity, comment);
+            }
+          } catch (Exception e) {
+            LOG.debug("Run in case of activity deleted and reupdate");
+            activityId = null;
+          }
+        }
+        if (activityId == null) {
+          Identity streamOwner = null;
+          String catId = (String) faqS.readQuestionProperty(question.getId(), FAQNodeTypes.EXO_CATEGORY_ID, String.class);
+          Identity spaceIdentity = getSpaceIdentity(catId);
+          if (spaceIdentity != null) {
+            // publish the activity in the space stream.
+            streamOwner = spaceIdentity;
+            templateParams.put(SPACE_GROUP_ID, ActivityUtils.getSpaceGroupId(catId));
+          }
+          List<String> categoryIds = faqS.getCategoryPath(catId);
+          Collections.reverse(categoryIds);
+          if (streamOwner == null) {
+            streamOwner = userIdentity;
+          }
+          ExoSocialActivity activity = newActivity(userIdentity, question.getQuestion(), questionDetail, templateParams);
+          activityM.saveActivityNoReturn(streamOwner, activity);
+          faqS.saveActivityIdForQuestion(question.getId(), activity.getId());
+
+          if (isUpdate) {
+            ExoSocialActivity comment = createCommentWhenUpdateQuestion(userIdentity, question);
+            if (!"".equals(comment.getTitle())) {
+              activityM.saveComment(activity, comment);
             }
           }
         }
