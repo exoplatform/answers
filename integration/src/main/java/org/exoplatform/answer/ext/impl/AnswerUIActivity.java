@@ -263,7 +263,6 @@ public class AnswerUIActivity extends BaseKSActivity {
       activity.setUserId(userIdentity.getId());
       activity.setTitle(comment.getComments());
       activity.setPostedTime(comment.getDateComment().getTime());
-      activity.setId(comment.getId());
 
     }
     return activity;
