@@ -41,6 +41,7 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
+import java.util.Comparator;
 
 import javax.jcr.ImportUUIDBehavior;
 import javax.jcr.Item;
@@ -296,7 +297,7 @@ public class JCRDataStorage implements DataStorage, FAQNodeTypes {
   }
 
   private NodeIterator getQuestionsIterator(Node parentNode, String strQuery, boolean isAll) throws Exception {
-    StringBuffer queryString = new StringBuffer(JCR_ROOT).append(parentNode.getPath()).append((isAll) ? "//" : "/").append("element(*,exo:faqQuestion)").append(strQuery);
+    StringBuffer queryString = new StringBuffer(JCR_ROOT).append(parentNode.getPath()).append((isAll) ? "//" : "/").append("element(*,exo:faqQuestion)").append(strQuery).append("order by @"+EXO_CREATED_DATE+" ascending");
     QueryManager qm = parentNode.getSession().getWorkspace().getQueryManager();
     Query query = qm.createQuery(queryString.toString(), Query.XPATH);
     QueryResult result = query.execute();
@@ -1915,7 +1916,7 @@ public class JCRDataStorage implements DataStorage, FAQNodeTypes {
     try {
       Node categoryHome = getCategoryHome(sProvider, null);
       QueryManager qm = categoryHome.getSession().getWorkspace().getQueryManager();
-      StringBuffer queryString = new StringBuffer(JCR_ROOT).append(categoryHome.getPath()).append("//element(*,exo:faqCategory)");
+      StringBuffer queryString = new StringBuffer(JCR_ROOT).append(categoryHome.getPath()).append("//element(*,exo:faqCategory) order by @"+EXO_CREATED_DATE+" ascending");
       Query query = qm.createQuery(queryString.toString(), Query.XPATH);
       QueryResult result = query.execute();
       NodeIterator iter = result.getNodes();
@@ -3512,6 +3513,7 @@ public class JCRDataStorage implements DataStorage, FAQNodeTypes {
               subCat = new SubCategoryInfo();
               subCat.setId(sub.getName());
               subCat.setName(sub.getProperty(EXO_NAME).getString());
+              subCat.setCreatedDate(sub.getProperty(EXO_CREATED_DATE).getDate().getTime());
               subCat.setPath(categoryInfo.getPath() + "/" + sub.getName());
               subCat.setSubCateInfos(getSubCategoryInfo(sub, categoryIdScoped));
               subCat.setQuestionInfos(getQuestionInfo(sub));
@@ -3519,6 +3521,11 @@ public class JCRDataStorage implements DataStorage, FAQNodeTypes {
             }
           }
         }
+        Collections.sort(subList, new Comparator<SubCategoryInfo>() {
+          public int compare(SubCategoryInfo sci1, SubCategoryInfo sci2) {
+            return sci1.getCreatedDate().compareTo(sci2.getCreatedDate());
+          }
+        });
         categoryInfo.setSubCateInfos(subList);
       }
     } catch (Exception e) {
