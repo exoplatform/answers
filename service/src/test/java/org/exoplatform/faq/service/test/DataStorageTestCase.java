@@ -48,6 +48,8 @@ import org.exoplatform.faq.service.Utils;
 import org.exoplatform.faq.service.Watch;
 import org.exoplatform.faq.service.impl.JCRDataStorage;
 import org.exoplatform.faq.service.impl.MultiLanguages;
+import org.exoplatform.faq.service.SubCategoryInfo;
+import org.exoplatform.faq.service.QuestionInfo;
 import org.exoplatform.forum.common.CommonUtils;
 import org.exoplatform.forum.common.NotifyInfo;
 import org.exoplatform.forum.common.jcr.PropertyReader;
@@ -216,16 +218,29 @@ public class DataStorageTestCase extends FAQServiceBaseTestCase {
   public void testSaveAnswer() throws Exception {
     //
     assertNull(dataStorage.getPageListAnswer(questionPath3, false));
-    
     //
     Answer answer1 = createAnswer(USER_ROOT, "Root answers a question");
     Answer answer2 = createAnswer(USER_DEMO, "Demo answers a question");
-    
+    Answer answer3 = createAnswer(USER_ROOT, "Root answers a question");
+    Answer answer4 = createAnswer(USER_DEMO, "Demo answers a question");
+
+    //
+    answer3.setDateResponse(null);
+    answer4.setDateResponse(null);
+
+    //
+    Date dt1 = answer1.getDateResponse();
+
     //
     dataStorage.saveAnswer(questionPath3, answer1, true);
     dataStorage.saveAnswer(questionPath3, answer2, true);
+    dataStorage.saveAnswer(questionPath3, answer3, true);
+    dataStorage.saveAnswer(questionPath3, answer4, true);
+
     assertNotNull(dataStorage.getPageListAnswer(questionPath3, false));
-    assertEquals(2, dataStorage.getPageListAnswer(questionPath3, false).getAll().size());
+    assertEquals(4, dataStorage.getPageListAnswer(questionPath3, false).getAll().size());
+    assertEquals(dt1, dataStorage.getAnswerById(questionPath3, answer1.getId()).getDateResponse());
+    assertNotNull(dataStorage.getAnswerById(questionPath3,answer3.getId()).getDateResponse());
   }
   
   public void testSaveAnswers() throws Exception {
@@ -247,11 +262,24 @@ public class DataStorageTestCase extends FAQServiceBaseTestCase {
     //
     Comment comment1 = createComment(USER_ROOT, "Root comments a question");
     Comment comment2 = createComment(USER_DEMO, "Demo comments a question");
+    Comment comment3 = createComment(USER_ROOT, "Root comments a question");
+    Comment comment4 = createComment(USER_DEMO, "Demo comments a question");
+
+    //
+    comment3.setDateComment(null);
+    comment4.setDateComment(null);
+
+    //
+    Date dt = comment1.getDateComment();
     
     //
     dataStorage.saveComment(questionPath5, comment1, true);
     dataStorage.saveComment(questionPath5, comment2, true);
-    assertEquals(2, dataStorage.getPageListComment(questionPath5).getAll().size());
+    dataStorage.saveComment(questionPath5, comment3, true);
+    dataStorage.saveComment(questionPath5, comment4, true);
+    assertEquals(4, dataStorage.getPageListComment(questionPath5).getAll().size());
+    assertEquals(dt,dataStorage.getCommentById(questionPath5,comment1.getId()).getDateComment());
+    assertNotNull(dataStorage.getCommentById(questionPath5,comment3.getId()));
   }
   
   public void testSaveAnswerQuestionLang() throws Exception {
@@ -311,20 +339,36 @@ public class DataStorageTestCase extends FAQServiceBaseTestCase {
   
   public void testSaveQuestion() throws Exception {
     //
-    Question question = createQuestion(categoryId1);
-    question.setRelations(new String[] {});
-    question.setLanguage("English");
-    question.setAuthor("quangpld");
-    question.setEmail("quangpld@exoplatform.com");
-    question.setDetail("Why always me?");
-    question.setCreatedDate(new Date());
+    Question question1 = createQuestion(categoryId1);
+    question1.setRelations(new String[] {});
+    question1.setLanguage("English");
+    question1.setAuthor("quangpld");
+    question1.setEmail("quangpld@exoplatform.com");
+    question1.setDetail("Why always me?");
+    question1.setCreatedDate(new Date());
+
+
+    //
+    Question question2 = createQuestion(categoryId1);
+    question2.setCreatedDate(null);
+    question2.setLastActivity(null);
+
+    //
+    Date dt = question1.getCreatedDate();
+    long dt1 = question1.getTimeOfLastActivity();
     
     //
-    dataStorage.saveQuestion(question, true, faqSetting_);
-    Question got = dataStorage.getQuestionById(question.getId());
+    dataStorage.saveQuestion(question1, true, faqSetting_);
+    dataStorage.saveQuestion(question2, true, faqSetting_);
+    Question got = dataStorage.getQuestionById(question1.getId());
+    Question got1 = dataStorage.getQuestionById(question2.getId());
     assertNotNull(got);
     assertEquals("quangpld", got.getAuthor());
     assertEquals("Why always me?", got.getDetail());
+    assertEquals(dt, got.getCreatedDate());
+    assertEquals(dt1, got.getTimeOfLastActivity());
+    assertNotNull(got1.getCreatedDate());
+    assertNotNull(got1.getTimeOfLastActivity());
   }
   
   public void testRemoveQuestion() throws Exception {
@@ -501,11 +545,22 @@ public class DataStorageTestCase extends FAQServiceBaseTestCase {
   
   public void testSaveCategory() throws Exception {
     Category cat4 = createCategory("Category #4", 4);
+    Category cat5 = createCategory("Category #5", 5);
+
+    //
+    Date dt = cat4.getCreatedDate();
+    cat5.setCreatedDate(null);
+
+
     dataStorage.saveCategory(Utils.CATEGORY_HOME, cat4, true);
+    dataStorage.saveCategory(Utils.CATEGORY_HOME, cat5, true);
     cat4 = dataStorage.getCategoryById(Utils.CATEGORY_HOME + "/" + cat4.getId());
+    cat5 = dataStorage.getCategoryById(Utils.CATEGORY_HOME + "/" + cat5.getId());
     assertNotNull(cat4);
     assertEquals("Category #4", cat4.getName());
     assertEquals(4, cat4.getIndex());
+    assertEquals(dt, cat4.getCreatedDate());
+    assertNotNull(cat5.getCreatedDate());
   }
   
   public void testListingCategoryTree() throws Exception {
@@ -612,7 +667,29 @@ public class DataStorageTestCase extends FAQServiceBaseTestCase {
     listCate = dataStorage.getSubCategories(Utils.CATEGORY_HOME, faqSetting_, true, new ArrayList<String>());
     assertEquals(3, listCate.size());
   }
-  
+
+  public boolean isCatContainCreatedDate(List<SubCategoryInfo> infoList){
+    return infoList.stream().filter(subCategoryInfo -> subCategoryInfo.getCreatedDate() == null).count() == 0;
+  }
+  public boolean isCatOrdredByCreatedDate(List<SubCategoryInfo> infoList){
+    for(int i=1; i<infoList.size(); i++){
+      if(infoList.get(i).getCreatedDate().before(infoList.get(i-1).getCreatedDate())){
+        return false;
+      }
+    }
+    return true;
+  }
+  public boolean isQuestContainCreatedDate(List<QuestionInfo> infoList){
+    return infoList.stream().filter(questionInfo -> questionInfo.getCreatedDate() == null).count() == 0;
+  }
+  public boolean isQuestOrdredByCreatedDate(List<QuestionInfo> infoList){
+    for(int i=1; i<infoList.size(); i++){
+      if(infoList.get(i).getCreatedDate().before(infoList.get(i-1).getCreatedDate())){
+        return false;
+      }
+    }
+    return true;
+  }
   public void testGetCategoryInfo() throws Exception {
     //
     assertEquals(dataStorage.getCategoryInfo(Utils.CATEGORY_HOME, faqSetting_)[0], 3);
@@ -621,6 +698,8 @@ public class DataStorageTestCase extends FAQServiceBaseTestCase {
     List<String> categoryIdScoped = new ArrayList<String>();
     CategoryInfo categoryInfo = dataStorage.getCategoryInfo(Utils.CATEGORY_HOME, categoryIdScoped);
     assertEquals(3, categoryInfo.getSubCateInfos().size());
+    assertEquals(true, isQuestContainCreatedDate(categoryInfo.getQuestionInfos()));
+    assertEquals(true, isQuestOrdredByCreatedDate(categoryInfo.getQuestionInfos()));
     
     //
     categoryInfo = dataStorage.getCategoryInfo(categoryId1, categoryIdScoped);
@@ -635,11 +714,16 @@ public class DataStorageTestCase extends FAQServiceBaseTestCase {
     loginUser(USER_DEMO);
     categoryInfo = dataStorage.getCategoryInfo(Utils.CATEGORY_HOME, categoryIdScoped);
     assertEquals(4, categoryInfo.getSubCateInfos().size());
+    assertEquals(true, isCatContainCreatedDate(categoryInfo.getSubCateInfos()));
+    assertEquals(true, isCatOrdredByCreatedDate(categoryInfo.getSubCateInfos()));
+
     
     //
     loginUser(USER_ROOT);
     categoryInfo = dataStorage.getCategoryInfo(Utils.CATEGORY_HOME, categoryIdScoped);
     assertEquals(3, categoryInfo.getSubCateInfos().size());
+    assertEquals(true, isCatContainCreatedDate(categoryInfo.getSubCateInfos()));
+    assertEquals(true, isCatOrdredByCreatedDate(categoryInfo.getSubCateInfos()));
     
   }
   

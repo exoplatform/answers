@@ -17,6 +17,7 @@
 package org.exoplatform.faq.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class SubCategoryInfo {
@@ -25,6 +26,8 @@ public class SubCategoryInfo {
   private String                path;
 
   private String                name;
+
+  private Date                  createdDate;
 
   private List<QuestionInfo>    questionInfos = new ArrayList<QuestionInfo>();
 
@@ -73,4 +76,11 @@ public class SubCategoryInfo {
     this.subCateInfos = subCateInfos;
   }
 
+  public Date getCreatedDate() {
+    return createdDate;
+  }
+
+  public void setCreatedDate(Date createdDate) {
+    this.createdDate = createdDate;
+  }
 }

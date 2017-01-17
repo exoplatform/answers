@@ -17,6 +17,7 @@
 package org.exoplatform.faq.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class QuestionInfo {
@@ -25,6 +26,8 @@ public class QuestionInfo {
   private String       question;
 
   private String       detail;
+
+  private Date         createdDate;
 
   private List<Answer> answers = new ArrayList<Answer>();
 
@@ -63,4 +66,11 @@ public class QuestionInfo {
     this.detail = detail;
   }
 
+  public Date getCreatedDate() {
+    return createdDate;
+  }
+
+  public void setCreatedDate(Date createdDate) {
+    this.createdDate = createdDate;
+  }
 }

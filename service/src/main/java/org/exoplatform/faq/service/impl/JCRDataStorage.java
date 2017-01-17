@@ -23,19 +23,20 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.Queue;
-import java.util.Random;
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Set;
+import java.util.HashSet;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Iterator;
+import java.util.Comparator;
+import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -671,7 +672,7 @@ public class JCRDataStorage implements DataStorage, FAQNodeTypes {
     }
     try {
       if (answerNode.isNew()) {
-        answerNode.setProperty(EXO_DATE_RESPONSE, CommonUtils.getGreenwichMeanTime());
+        answerNode.setProperty(EXO_DATE_RESPONSE, (answer.getDateResponse() == null)? CommonUtils.getGreenwichMeanTime().getTimeInMillis():answer.getDateResponse().getTime());
         answerNode.setProperty(EXO_ID, answer.getId());
         answerNode.setProperty(EXO_APPROVE_RESPONSES, answer.getApprovedAnswers());
         answerNode.setProperty(EXO_ACTIVATE_RESPONSES, answer.getActivateAnswers());
@@ -714,7 +715,7 @@ public class JCRDataStorage implements DataStorage, FAQNodeTypes {
       Node commentNode;
       if (isNew) {
         commentNode = commentHome.addNode(comment.getId(), EXO_COMMENT);
-        commentNode.setProperty(EXO_DATE_COMMENT, CommonUtils.getGreenwichMeanTime());
+        commentNode.setProperty(EXO_DATE_COMMENT, (comment.getDateComment() == null)? CommonUtils.getGreenwichMeanTime().getTimeInMillis():comment.getDateComment().getTime());
         commentNode.setProperty(EXO_ID, comment.getId());
       } else {
         commentNode = commentHome.getNode(comment.getId());
@@ -752,7 +753,7 @@ public class JCRDataStorage implements DataStorage, FAQNodeTypes {
       Node answerNode;
       if (isNew) {
         answerNode = answerHome.addNode(answer.getId(), EXO_ANSWER);
-        answerNode.setProperty("exo:dateResponses", CommonUtils.getGreenwichMeanTime());
+        answerNode.setProperty(EXO_DATE_RESPONSE, (answer.getDateResponse() == null)? CommonUtils.getGreenwichMeanTime().getTimeInMillis() : answer.getDateResponse().getTime());
         answerNode.setProperty(EXO_APPROVE_RESPONSES, answer.getApprovedAnswers());
         answerNode.setProperty(EXO_ACTIVATE_RESPONSES, answer.getActivateAnswers());
       } else {
@@ -873,9 +874,9 @@ public class JCRDataStorage implements DataStorage, FAQNodeTypes {
     questionNode.setProperty(EXO_EMAIL, question.getEmail());
     questionNode.setProperty(EXO_TITLE, question.getQuestion());
     Calendar calendar = CommonUtils.getGreenwichMeanTime();
-    questionNode.setProperty(EXO_LAST_ACTIVITY, getLastActivityInfo(question.getAuthor(), calendar.getTimeInMillis()));
+    questionNode.setProperty(EXO_LAST_ACTIVITY, ((Object)question.getTimeOfLastActivity() == null) ? getLastActivityInfo(question.getAuthor(), calendar.getTimeInMillis()):getLastActivityInfo(question.getAuthor(), question.getTimeOfLastActivity()));
     if (isNew) {
-      questionNode.setProperty(EXO_CREATED_DATE, calendar);
+      questionNode.setProperty(EXO_CREATED_DATE, (question.getCreatedDate() == null)? calendar.getTimeInMillis() : question.getCreatedDate().getTime());
       questionNode.setProperty(EXO_LANGUAGE, question.getLanguage());
     }
     String cateId = questionNode.getParent().getParent().getName();
@@ -1567,7 +1568,7 @@ public class JCRDataStorage implements DataStorage, FAQNodeTypes {
 
     if (category.getId() != null) {
       categoryNode.setProperty(EXO_ID, category.getId());
-      categoryNode.setProperty(EXO_CREATED_DATE, CommonUtils.getGreenwichMeanTime());
+      categoryNode.setProperty(EXO_CREATED_DATE, (category.getCreatedDate() == null) ? CommonUtils.getGreenwichMeanTime().getTimeInMillis() : category.getCreatedDate().getTime());
       categoryNode.setProperty(EXO_IS_VIEW, category.isView());
     }
     categoryNode.setProperty(EXO_INDEX, category.getIndex());
@@ -3512,6 +3513,7 @@ public class JCRDataStorage implements DataStorage, FAQNodeTypes {
               subCat = new SubCategoryInfo();
               subCat.setId(sub.getName());
               subCat.setName(sub.getProperty(EXO_NAME).getString());
+              subCat.setCreatedDate(sub.getProperty(EXO_CREATED_DATE).getDate().getTime());
               subCat.setPath(categoryInfo.getPath() + "/" + sub.getName());
               subCat.setSubCateInfos(getSubCategoryInfo(sub, categoryIdScoped));
               subCat.setQuestionInfos(getQuestionInfo(sub));
@@ -3519,6 +3521,7 @@ public class JCRDataStorage implements DataStorage, FAQNodeTypes {
             }
           }
         }
+        Collections.sort(subList, (SubCategoryInfo sci1, SubCategoryInfo sci2) -> sci1.getCreatedDate().compareTo(sci2.getCreatedDate()));
         categoryInfo.setSubCateInfos(subList);
       }
     } catch (Exception e) {
@@ -3727,6 +3730,7 @@ public class JCRDataStorage implements DataStorage, FAQNodeTypes {
         try {
           questionInfo.setQuestion(question.getProperty(EXO_TITLE).getString());
           questionInfo.setDetail(question.getProperty(EXO_NAME).getString());
+          questionInfo.setCreatedDate(question.getProperty(EXO_CREATED_DATE).getDate().getTime());
           questionInfo.setId(question.getName());
           if (question.hasNode(Utils.ANSWER_HOME)) {
             List<Answer> answers = new ArrayList<Answer>();
@@ -3753,6 +3757,7 @@ public class JCRDataStorage implements DataStorage, FAQNodeTypes {
         }
       }
     }
+    Collections.sort(questionInfoList, (QuestionInfo qi1, QuestionInfo qi2) -> qi1.getCreatedDate().compareTo(qi2.getCreatedDate()));
     return questionInfoList;
   }
 
