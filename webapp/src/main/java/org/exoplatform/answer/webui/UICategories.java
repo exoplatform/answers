@@ -204,7 +204,7 @@ public class UICategories extends BaseUIFAQForm {
     boolean isAdmin = faqSetting_.isAdmin();
     if(!isAdmin) isAdmin = isModerator;
     faqSetting.setIsAdmin(String.valueOf(isAdmin));
-    List<Category> list = getFAQService().getSubCategories(categoryId, faqSetting, true, null);
+    List<Category> list = getFAQService().getSubCategories(categoryId, faqSetting, null);
     for (Category category : list) {
       if (isAdmin || FAQUtils.hasPermission(category)) {
         listCate.add(category);

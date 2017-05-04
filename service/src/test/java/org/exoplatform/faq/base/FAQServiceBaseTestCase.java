@@ -197,7 +197,7 @@ public abstract class FAQServiceBaseTestCase extends BaseExoTestCase {
   protected void removeData() throws Exception {
     FAQSetting faqSetting = new FAQSetting();
     faqSetting.setIsAdmin("TRUE");
-    List<Category> categories = faqService_.getSubCategories(Utils.CATEGORY_HOME, faqSetting, false, null);
+    List<Category> categories = faqService_.getSubCategories(Utils.CATEGORY_HOME, faqSetting,null);
     for (Category category : categories) {
       faqService_.removeCategory(category.getPath());
     }

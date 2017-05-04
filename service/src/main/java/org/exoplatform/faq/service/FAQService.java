@@ -132,16 +132,15 @@ public interface FAQService extends FAQServiceLegacy {
   /**
    * Gets all sub-categories of a category.
    * 
-   * @param categoryId Id of the category.
+   * @param categoryPath Path of the category.
    * @param faqSetting Settings of FAQ.
-   * @param isGetAll Deprecated. 
    * @param userView Users who have the view permission on sub-categories of a category.
    * @return Sub-categories.
    * 
    * @throws Exception the exception
    * @LevelAPI Platform
    */
-  public List<Category> getSubCategories(String categoryId, FAQSetting faqSetting, boolean isGetAll, List<String> userView) throws Exception;
+  public List<Category> getSubCategories(String categoryPath, FAQSetting faqSetting, List<String> userView) throws Exception;
 
   /**
    * Moves a category to another one.

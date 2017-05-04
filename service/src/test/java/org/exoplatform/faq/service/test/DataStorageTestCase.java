@@ -659,12 +659,12 @@ public class DataStorageTestCase extends FAQServiceBaseTestCase {
   
   public void testGetSubCategories() throws Exception {    
     //
-    List<Category> listCate = dataStorage.getSubCategories(Utils.CATEGORY_HOME, faqSetting_, true, Arrays.asList(new String[]{"john", "manager:/admin/user"}));
+    List<Category> listCate = dataStorage.getSubCategories(Utils.CATEGORY_HOME, faqSetting_, Arrays.asList(new String[]{"john", "manager:/admin/user"}));
     assertEquals(3, listCate.size());
     
     //
     faqSetting_.setIsAdmin("true");
-    listCate = dataStorage.getSubCategories(Utils.CATEGORY_HOME, faqSetting_, true, new ArrayList<String>());
+    listCate = dataStorage.getSubCategories(Utils.CATEGORY_HOME, faqSetting_, new ArrayList<String>());
     assertEquals(3, listCate.size());
   }
 
@@ -730,13 +730,13 @@ public class DataStorageTestCase extends FAQServiceBaseTestCase {
   public void testMoveCategory() throws Exception {
     //
     List<String> limitedUsers = new ArrayList<String>();
-    assertEquals(3, dataStorage.getSubCategories(Utils.CATEGORY_HOME, faqSetting_, true, limitedUsers).size());
-    assertEquals(0, dataStorage.getSubCategories(categoryId1, faqSetting_, true, limitedUsers).size());
+    assertEquals(3, dataStorage.getSubCategories(Utils.CATEGORY_HOME, faqSetting_, limitedUsers).size());
+    assertEquals(0, dataStorage.getSubCategories(categoryId1, faqSetting_, limitedUsers).size());
     
     //
     dataStorage.moveCategory(categoryId2, categoryId1);
-    assertEquals(2, dataStorage.getSubCategories(Utils.CATEGORY_HOME, faqSetting_, true, limitedUsers).size());
-    assertEquals(1, dataStorage.getSubCategories(categoryId1, faqSetting_, true, limitedUsers).size());
+    assertEquals(2, dataStorage.getSubCategories(Utils.CATEGORY_HOME, faqSetting_, limitedUsers).size());
+    assertEquals(1, dataStorage.getSubCategories(categoryId1, faqSetting_, limitedUsers).size());
   }
   
   public void testAddWatchCategory() throws Exception {

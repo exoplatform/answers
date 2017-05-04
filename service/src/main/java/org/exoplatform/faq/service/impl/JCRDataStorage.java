@@ -2013,7 +2013,7 @@ public class JCRDataStorage implements DataStorage, FAQNodeTypes {
   }
 
   @Override
-  public List<Category> getSubCategories(String categoryId, FAQSetting faqSetting, boolean isGetAll, List<String> limitedUsers) throws Exception {
+  public List<Category> getSubCategories(String categoryPath, FAQSetting faqSetting, List<String> limitedUsers) throws Exception {
     SessionProvider sProvider = CommonUtils.createSystemProvider();
     List<Category> catList = new ArrayList<Category>();
     if (limitedUsers == null) {
@@ -2021,10 +2021,10 @@ public class JCRDataStorage implements DataStorage, FAQNodeTypes {
     }
     try {
       Node parentCategory;
-      if (categoryId == null || categoryId.equals(Utils.CATEGORY_HOME)) {
+      if (categoryPath == null || categoryPath.equals(Utils.CATEGORY_HOME)) {
         parentCategory = getCategoryHome(sProvider, null);
       } else
-        parentCategory = getFAQServiceHome(sProvider).getNode(categoryId);
+        parentCategory = getFAQServiceHome(sProvider).getNode(categoryPath);
       if (!faqSetting.isAdmin()) {
         PropertyReader reader = new PropertyReader(parentCategory);
         List<String> userPrivates = reader.list(EXO_USER_PRIVATE, new ArrayList<String>());

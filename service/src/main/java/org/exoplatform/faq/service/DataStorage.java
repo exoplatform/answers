@@ -139,7 +139,7 @@ public interface DataStorage {
 
   Node getCategoryNodeById(String categoryId) throws Exception;
 
-  List<Category> getSubCategories(String categoryId, FAQSetting faqSetting, boolean isGetAll, List<String> limitedUsers) throws Exception;
+  List<Category> getSubCategories(String categoryPath, FAQSetting faqSetting, List<String> limitedUsers) throws Exception;
 
   long[] getCategoryInfo(String categoryId, FAQSetting faqSetting) throws Exception;
 

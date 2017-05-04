@@ -129,20 +129,20 @@ public class FAQServiceTestCase extends FAQServiceBaseTestCase {
     // get Categories with normal user
     FAQSetting faqSetting = new FAQSetting();
     faqSetting.setIsAdmin("false");
-    List<Category> listCate = faqService_.getSubCategories(Utils.CATEGORY_HOME, faqSetting, true, Arrays.asList(new String[]{"demo", "/admin/user"}));
+    List<Category> listCate = faqService_.getSubCategories(Utils.CATEGORY_HOME, faqSetting, Arrays.asList(new String[]{"demo", "/admin/user"}));
     assertEquals(1, listCate.size());
     // get Categories with moderators/administrators 
-    listCate = faqService_.getSubCategories(Utils.CATEGORY_HOME, faqSetting, true, Arrays.asList(new String[]{"john", "manager:/admin/user"}));
+    listCate = faqService_.getSubCategories(Utils.CATEGORY_HOME, faqSetting, Arrays.asList(new String[]{"john", "manager:/admin/user"}));
     assertEquals(2, listCate.size());
     faqSetting.setIsAdmin("true");
-    listCate = faqService_.getSubCategories(Utils.CATEGORY_HOME, faqSetting, true, new ArrayList<String>());
+    listCate = faqService_.getSubCategories(Utils.CATEGORY_HOME, faqSetting, new ArrayList<String>());
     assertEquals(2, listCate.size());
 
     // Get Maxindex of cateogry
     assertEquals("Root have two category and maxIndex of subcategories in root is't 2", faqService_.getMaxindexCategory(Utils.CATEGORY_HOME), 2);
 
     // get sub category
-    List<Category> listSubCate = faqService_.getSubCategories(cate1.getPath(), faqSetting_, false, null);
+    List<Category> listSubCate = faqService_.getSubCategories(cate1.getPath(), faqSetting_, null);
     assertEquals("Category 1 not only have one subcategory", listSubCate.size(), 1);
 
     // update sub category

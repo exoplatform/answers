@@ -70,7 +70,7 @@ public class UIAnswersContainer extends UIContainer {
     String cateIdView = Utils.CATEGORY_HOME;
     if (!faqSetting_.isAdmin() && !faqSetting_.isPostQuestionInRootCategory()) {
       propetyOfUser = UserHelper.getAllGroupAndMembershipOfUser(null);
-      List<Category> cates = faqService_.getSubCategories(cateIdView, faqSetting_, true, propetyOfUser);
+      List<Category> cates = faqService_.getSubCategories(cateIdView, faqSetting_, propetyOfUser);
       if (cates != null && cates.size() > 0)
         cateIdView = cateIdView + "/" + cates.get(0).getId();
     }
