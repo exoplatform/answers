@@ -360,51 +360,6 @@
     }
   };
   
-  UIAnswersPortlet.printPreview = function (obj) {
-    var uiPortalApplication = $("#UIPortalApplication");
-    var answerContainer = $(obj).parents('.AnswersContainer');
-    var printArea = answerContainer.find('div.QuestionSelect:first');
-    printArea = printArea.clone();
-    
-    var dummyPortlet = $('<div></div>').addClass('UIAnswersPortlet UIPrintPreview');
-    var FAQContainer = $('<div></div>').addClass('AnswersContainer');
-    var FAQContent   = $('<div></div>').addClass('FAQContent');
-    var printActions = $('<div></div>').addClass('UIAction')
-                                       .css('display', 'block');
-    var printActionInApp = answerContainer.find('div.PrintAction:first');
-    var cancelAction = $('<a></a>').addClass('ActionButton LightBlueStyle')
-                                   .attr('href', 'javascript:void(0);')
-                                   .html(printActionInApp.attr('title'));
-    var printAction = $('<a></a>').addClass('ActionButton LightBlueStyle')
-                                  .html(printActionInApp.html());
-  
-    printActions.append(printAction);
-    printActions.append(cancelAction);
-  
-    if (!$.browser.msie) {
-      var cssContent = $('<div></div>').html('<style type="text/css">.DisablePrint{display:none;}</style>')
-                                       .css('display', 'block');
-      FAQContent.append(cssContent);
-    }
-    FAQContent.append(printArea);
-    FAQContainer.append(FAQContent);
-    FAQContainer.append(printActions);
-    dummyPortlet.append(FAQContainer);
-    if ($.browser.msie) {
-      dummyPortlet.find('.DisablePrint').hide();
-    }
-    dummyPortlet = UIAnswersPortlet.removeLink(dummyPortlet);
-    dummyPortlet.css('width', '98.5%');
-    UIAnswersPortlet.removeLink(dummyPortlet).insertBefore(uiPortalApplication);
-    uiPortalApplication.hide();
-    $(window).scrollTop(0).scrollLeft(0);
-  
-    cancelAction.on('click', UIAnswersPortlet.closePrint);
-    printAction.on('click', window.print);
-  
-    UIAnswersPortlet.viewImage = false;
-  };
-  
   UIAnswersPortlet.printAll = function (obj) {
     var container = $('<div></div>').addClass('PrintAllAnswersPortlet');
     if (typeof (obj) == 'string') obj = $.fn.findId(obj);
@@ -590,18 +545,10 @@
     var cont = $.fn.findId(id);
     if (cont.exists()) {
       UIAnswersPortlet.disableContextMenu(id);
-      if ($.browser.msie === true) {
-        cont.find('.oncontextmenu').attr('oncontextmenu', 'return eXo.answer.UIAnswersPortlet.runContextMenu(this, event)');
-      } else {
-        cont.find('.oncontextmenu').off('contextmenu').on('contextmenu', contextMenu.show);
-      }
+      cont.find('.oncontextmenu').off('contextmenu').on('contextmenu', contextMenu.show);
     }
   };
 
-  UIAnswersPortlet.runContextMenu = function(elm, event) {
-    contextMenu.showMenu(elm, event);
-  };
-  
   UIAnswersPortlet.voteAnswerUpDown = function (imageId, isVote) {
     var obj = $.fn.findId(imageId);
     if (isVote) obj.css({'filter':' alpha(opacity: 100)', 'MozOpacity':1});
