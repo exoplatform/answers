@@ -67,7 +67,8 @@ import org.exoplatform.webui.form.UIFormTextAreaInput;
     @EventConfig(listeners = BaseUIActivity.SetCommentListStatusActionListener.class),
     @EventConfig(listeners = BaseUIActivity.DeleteActivityActionListener.class),
     @EventConfig(listeners = BaseUIActivity.DeleteCommentActionListener.class),
-    @EventConfig(listeners = AnswerUIActivity.PostCommentActionListener.class) })
+    @EventConfig(listeners = AnswerUIActivity.PostCommentActionListener.class),
+    @EventConfig(listeners = BaseUIActivity.LikeCommentActionListener.class)})
 public class AnswerUIActivity extends BaseKSActivity {
   
   private Question question = null;
@@ -315,6 +316,8 @@ public class AnswerUIActivity extends BaseKSActivity {
 
     @Override
     public void execute(Event<BaseUIActivity> event) throws Exception {
+      String commentId = event.getRequestContext().getRequestParameter(OBJECTID);
+      commentId = StringUtils.isBlank(commentId) ? null : commentId;
       AnswerUIActivity uiActivity = (AnswerUIActivity) event.getSource();
       WebuiRequestContext context = event.getRequestContext();
       UIFormTextAreaInput uiFormComment = uiActivity.getChild(UIFormTextAreaInput.class);
@@ -417,8 +420,11 @@ public class AnswerUIActivity extends BaseKSActivity {
       Map<String, String> commentTemplateParams = new HashMap<String, String>();
       commentTemplateParams.put(AnswersSpaceActivityPublisher.LINK_KEY, comment.getId());
       cm.setTemplateParams(commentTemplateParams);
+      cm.setParentCommentId(commentId);
       activityM.saveComment(activity, cm);
       faqService.saveActivityIdForComment(question.getPath(), comment.getId(), question.getLanguage(), cm.getId());
+      uiActivity.getAndSetUpdatedCommentId(commentId);
+      uiActivity.focusToComment(cm.getId());
       uiActivity.refresh();
       context.addUIComponentToUpdateByAjax(uiActivity);
 
