@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.exoplatform.addons.answers</groupId>
     <artifactId>answers-parent</artifactId>
-    <version>1.3.x-SNAPSHOT</version>
+    <version>1.3.0-M27</version>
   </parent>
   <artifactId>answers-portlets</artifactId>
   <packaging>war</packaging>
