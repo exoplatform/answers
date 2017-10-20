@@ -243,7 +243,7 @@ public class AnswerUIActivity extends BaseKSActivity {
     }
   }
   
-  private String getSpaceGroupId() {
+  public String getSpaceGroupId() {
     return ActivityUtils.getSpaceGroupId(getQuestion().getCategoryId());
   }
   
