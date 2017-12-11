@@ -152,4 +152,9 @@ public class AnswerDataInitialize extends SpaceListenerPlugin {
   public void addPendingUser(SpaceLifeCycleEvent event) {
   }
 
+  @java.lang.Override
+  public void spaceBannerEdited(SpaceLifeCycleEvent event) {
+
+  }
+
 }
