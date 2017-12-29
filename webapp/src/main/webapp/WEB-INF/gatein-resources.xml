@@ -79,6 +79,9 @@
       <module>jquery</module>
       <as>gj</as>
     </depends>
+    <depends>
+      <module>base</module>
+    </depends>
   </module>
 
   <module>

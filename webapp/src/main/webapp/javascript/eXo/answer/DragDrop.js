@@ -1,4 +1,4 @@
-(function($, eventManager, window, document) {
+(function($, base, eventManager, window, document) {
 
   var DragDrop = {
     dragObject : null,
@@ -78,11 +78,13 @@
 
     setup : function(targetClass) {
       DragDrop.targetClass = targetClass;
-      if($.browser.msie) {
+
+      if(base.Browser.isIE()) {
         $(document).on('dragstart', function(e){
           return false;
         });
       }
+
       $(document).on('mousemove', DragDrop.onDrag);
       $(document).on('mouseup', DragDrop.onDrop);
     },
@@ -111,21 +113,22 @@
       }
       DragDrop.endDrop();
     },
-    
+
     endDrop : function() {
       delete DragDrop.dragObject;
       delete DragDrop.targetClass;
       delete DragDrop.hided;
       delete DragDrop.rootNode;
       $('#UIPortalApplication  > ul.faqDn').remove();
-      
-      if($.browser.msie) {
+
+      if(base.Browser.isIE()) {
         $(document).off('dragstart');
       }
+
       $(document).off('mousemove', DragDrop.onDrag);
       $(document).off('mouseup', DragDrop.onDrop);
     },
-    
+
     findTarget : function(evt) {
       var targetClass = DragDrop.targetClass;
       if (targetClass) {
@@ -194,4 +197,4 @@
   };
 
   return DragDrop;
-})(gj, forumEventManager, window, document);
+})(gj, base, forumEventManager, window, document);
