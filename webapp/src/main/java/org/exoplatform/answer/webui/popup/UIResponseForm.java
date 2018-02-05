@@ -34,6 +34,7 @@ import org.exoplatform.answer.webui.UIAnswersPortlet;
 import org.exoplatform.answer.webui.UIQuestions;
 import org.exoplatform.answer.webui.ValidatorDataInput;
 import org.exoplatform.commons.utils.HTMLSanitizer;
+import org.exoplatform.commons.utils.StringCommonUtils;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.faq.service.Answer;
 import org.exoplatform.faq.service.FAQSetting;
@@ -54,12 +55,12 @@ import org.exoplatform.webui.core.UIPopupComponent;
 import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
 import org.exoplatform.webui.core.model.SelectItemOption;
 import org.exoplatform.webui.event.Event;
-import org.exoplatform.webui.event.EventListener;
 import org.exoplatform.webui.event.Event.Phase;
+import org.exoplatform.webui.event.EventListener;
+import org.exoplatform.webui.form.UIFormRichtextInput;
 import org.exoplatform.webui.form.UIFormSelectBox;
 import org.exoplatform.webui.form.input.UICheckBoxInput;
 import org.exoplatform.webui.form.validator.MandatoryValidator;
-import org.exoplatform.webui.form.UIFormRichtextInput;
 
 
 @ComponentConfig(
@@ -156,7 +157,7 @@ public class UIResponseForm extends BaseUIFAQForm implements UIPopupComponent {
     if (CommonUtils.isEmpty(value)) {
       value = "";
     }
-    inputResponseQuestion_.setValue(CommonUtils.decodeSpecialCharToHTMLnumberIgnore(value));
+    inputResponseQuestion_.setValue(StringCommonUtils.decodeSpecialCharToHTMLnumberIgnore(value));
   }
 
   public void setAnswerInfor(Question question, Answer answer, String language) {
@@ -526,7 +527,7 @@ public class UIResponseForm extends BaseUIFAQForm implements UIPopupComponent {
       if (ValidatorDataInput.fckContentIsNotEmpty(responseContent)) {
         if (responseForm.mapAnswers.containsKey(responseForm.currentLanguage)) {
           answer = responseForm.mapAnswers.get(responseForm.currentLanguage);
-          answer.setResponses(CommonUtils.encodeSpecialCharInSearchTerm(responseContent));
+          answer.setResponses(StringCommonUtils.encodeSpecialCharInSearchTerm(responseContent));
         } else {
           answer = new Answer();
           answer.setNew(true);

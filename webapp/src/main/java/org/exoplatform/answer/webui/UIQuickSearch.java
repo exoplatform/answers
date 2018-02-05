@@ -21,12 +21,12 @@ import java.util.List;
 
 import org.exoplatform.answer.webui.popup.ResultQuickSearch;
 import org.exoplatform.answer.webui.popup.UIAdvancedSearchForm;
+import org.exoplatform.commons.utils.StringCommonUtils;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.faq.service.FAQEventQuery;
 import org.exoplatform.faq.service.FAQService;
 import org.exoplatform.faq.service.FAQSetting;
 import org.exoplatform.faq.service.ObjectSearchResult;
-import org.exoplatform.forum.common.CommonUtils;
 import org.exoplatform.forum.common.UserHelper;
 import org.exoplatform.forum.common.webui.BaseEventListener;
 import org.exoplatform.forum.common.webui.WebUIUtils;
@@ -79,7 +79,7 @@ public class UIQuickSearch extends BaseUIFAQForm {
       UIFormStringInput formStringInput = uiQuickSearch.getUIStringInput(FIELD_SEARCHVALUE);
       String text = formStringInput.getValue();
       if (text != null && text.trim().length() > 0) {
-      	text = CommonUtils.encodeSpecialCharInTitle(text);
+      	text = StringCommonUtils.encodeSpecialCharForSimpleInput(text);
         FAQService faqService = FAQUtils.getFAQService();
         List<ObjectSearchResult> list = new ArrayList<ObjectSearchResult>();
         FAQEventQuery eventQuery = new FAQEventQuery();

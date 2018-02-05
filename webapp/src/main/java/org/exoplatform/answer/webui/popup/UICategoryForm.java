@@ -23,6 +23,7 @@ import org.exoplatform.answer.webui.UIAnswersPortlet;
 import org.exoplatform.answer.webui.UIBreadcumbs;
 import org.exoplatform.answer.webui.UICategories;
 import org.exoplatform.answer.webui.UIQuestions;
+import org.exoplatform.commons.utils.StringCommonUtils;
 import org.exoplatform.faq.service.Category;
 import org.exoplatform.forum.common.CommonUtils;
 import org.exoplatform.forum.common.UserHelper;
@@ -145,7 +146,7 @@ public class UICategoryForm extends BaseUIFAQForm implements UIPopupComponent {
       oldName_ = cat.getName();
       oldIndex_ = cat.getIndex();
       if (oldName_ != null && oldName_.trim().length() > 0) {
-        getUIStringInput(FIELD_NAME_INPUT).setValue(CommonUtils.decodeSpecialCharToHTMLnumber(oldName_));
+        getUIStringInput(FIELD_NAME_INPUT).setValue(StringCommonUtils.decodeSpecialCharToHTMLnumber(oldName_));
       } else {
         getUIStringInput(FIELD_NAME_INPUT).setValue("Root");
       }
@@ -168,7 +169,7 @@ public class UICategoryForm extends BaseUIFAQForm implements UIPopupComponent {
     public void execute(Event<UICategoryForm> event) throws Exception {
       UICategoryForm uiCategory = event.getSource();
       String name = uiCategory.getUIStringInput(FIELD_NAME_INPUT).getValue();
-      name = CommonUtils.encodeSpecialCharInTitle(name).replaceAll("( \\s*)", CommonUtils.SPACE).trim();
+      name = StringCommonUtils.encodeSpecialCharForSimpleInput(name).replaceAll("( \\s*)", CommonUtils.SPACE).trim();
       if ((uiCategory.isAddNew_ || !name.equals(uiCategory.oldName_)) && 
           uiCategory.getFAQService().isCategoryExist(name, uiCategory.parentId_)) {
         uiCategory.warning("UICateforyForm.sms.cate-name-exist");

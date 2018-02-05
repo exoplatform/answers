@@ -23,10 +23,10 @@ import java.util.Locale;
 
 import org.exoplatform.answer.webui.BaseUIFAQForm;
 import org.exoplatform.answer.webui.FAQUtils;
+import org.exoplatform.commons.utils.StringCommonUtils;
 import org.exoplatform.faq.service.FAQEventQuery;
 import org.exoplatform.faq.service.FAQSetting;
 import org.exoplatform.faq.service.ObjectSearchResult;
-import org.exoplatform.forum.common.CommonUtils;
 import org.exoplatform.forum.common.UserHelper;
 import org.exoplatform.forum.common.webui.UIPopupAction;
 import org.exoplatform.forum.common.webui.UIPopupContainer;
@@ -298,11 +298,11 @@ public class UIAdvancedSearchForm extends BaseUIFAQForm implements UIPopupCompon
         return;
       }
       
-      text = CommonUtils.encodeSpecialCharInTitle(text);
-      categoryName = CommonUtils.encodeSpecialCharInSearchTerm(categoryName);
-      question = CommonUtils.encodeSpecialCharInSearchTerm(question);
-      response = CommonUtils.encodeSpecialCharInContent(response);
-      comment = CommonUtils.encodeSpecialCharInContent(comment);
+      text = StringCommonUtils.encodeSpecialCharForSimpleInput(text);
+      categoryName = StringCommonUtils.encodeSpecialCharInSearchTerm(categoryName);
+      question = StringCommonUtils.encodeSpecialCharInSearchTerm(question);
+      response = StringCommonUtils.encodeSpecialCharForSimpleInput(response);
+      comment = StringCommonUtils.encodeSpecialCharForSimpleInput(comment);
       /**
        * Create query string from data inputed
        */

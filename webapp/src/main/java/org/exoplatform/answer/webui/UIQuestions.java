@@ -42,6 +42,7 @@ import org.exoplatform.answer.webui.popup.UIResponseForm;
 import org.exoplatform.answer.webui.popup.UISendMailForm;
 import org.exoplatform.answer.webui.popup.UIUserSettingForm;
 import org.exoplatform.answer.webui.popup.UIViewUserProfile;
+import org.exoplatform.commons.utils.StringCommonUtils;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.faq.service.Answer;
 import org.exoplatform.faq.service.Category;
@@ -879,7 +880,7 @@ public class UIQuestions extends UIContainer {
     public void execute(Event<UIQuestions> event) throws Exception {
       UIQuestions question = event.getSource();
       String userId = event.getRequestContext().getRequestParameter(OBJECTID);
-      userId = CommonUtils.decodeSpecialCharToHTMLnumber(userId);
+      userId = StringCommonUtils.decodeSpecialCharToHTMLnumber(userId);
       User user = UserHelper.getUserByUserId(userId);
       if (user != null) {
         UIAnswersPortlet portlet = question.getAncestorOfType(UIAnswersPortlet.class);

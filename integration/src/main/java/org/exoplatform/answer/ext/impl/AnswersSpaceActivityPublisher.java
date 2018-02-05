@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.exoplatform.commons.utils.CommonsUtils;
+import org.exoplatform.commons.utils.StringCommonUtils;
 import org.exoplatform.container.ExoContainer;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.faq.service.Answer;
@@ -32,7 +33,6 @@ import org.exoplatform.faq.service.FAQService;
 import org.exoplatform.faq.service.Question;
 import org.exoplatform.faq.service.Utils;
 import org.exoplatform.faq.service.impl.AnswerEventListener;
-import org.exoplatform.forum.common.CommonUtils;
 import org.exoplatform.forum.common.UserHelper;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
@@ -82,7 +82,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
   
   private ExoSocialActivity newActivity(Identity author, String title, String body, Map<String, String> templateParams) {
     ExoSocialActivity activity = new ExoSocialActivityImpl();
-    activity.setTitle(CommonUtils.decodeSpecialCharToHTMLnumber(title));
+    activity.setTitle(StringCommonUtils.decodeSpecialCharToHTMLnumber(title));
     activity.setTitleId("add-question");
     activity.setBody(body);
     activity.setType(SPACE_APP_ID);
@@ -394,7 +394,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
             if (UserHelper.getUserByUserId(question.getAuthor()) == null) {
               userIdentity = identityM.getIdentity(activity.getPosterId(), false);
             }
-            activity.setTitle(CommonUtils.decodeSpecialCharToHTMLnumber(question.getQuestion()));
+            activity.setTitle(StringCommonUtils.decodeSpecialCharToHTMLnumber(question.getQuestion()));
             activity.setBody(questionDetail);
             activity.setTemplateParams(templateParams);
             activityM.updateActivity(activity);
@@ -528,8 +528,8 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
     String questionDetail = ActivityUtils.processContent(question.getDetail());
     if ("questionName".equals(e.getPropertyName())) {
       String questionName = question.getQuestion();
-      I18NActivityUtils.addResourceKey(comment, "question-update-title", CommonUtils.decodeSpecialCharToHTMLnumberIgnore(questionName));
-      return "Title has been updated to: " + CommonUtils.decodeSpecialCharToHTMLnumber(questionName);
+      I18NActivityUtils.addResourceKey(comment, "question-update-title", StringCommonUtils.decodeSpecialCharToHTMLnumberIgnore(questionName));
+      return "Title has been updated to: " + StringCommonUtils.decodeSpecialCharToHTMLnumber(questionName);
     } else if ("questionDetail".equals(e.getPropertyName())) {
       I18NActivityUtils.addResourceKey(comment, "question-update-detail", questionDetail);
       return "Details has been edited to: " + questionDetail;

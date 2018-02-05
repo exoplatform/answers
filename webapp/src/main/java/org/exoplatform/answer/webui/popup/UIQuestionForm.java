@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.exoplatform.answer.webui.BaseUIFAQForm;
 import org.exoplatform.answer.webui.FAQUtils;
 import org.exoplatform.answer.webui.UIAnswersContainer;
@@ -30,6 +29,7 @@ import org.exoplatform.answer.webui.UIAnswersPortlet;
 import org.exoplatform.answer.webui.UIQuestions;
 import org.exoplatform.answer.webui.ValidatorDataInput;
 import org.exoplatform.commons.utils.HTMLSanitizer;
+import org.exoplatform.commons.utils.StringCommonUtils;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.faq.service.FAQSetting;
 import org.exoplatform.faq.service.FileAttachment;
@@ -275,7 +275,7 @@ public class UIQuestionForm extends BaseUIFAQForm implements UIPopupComponent {
         input = input.replace("<p>", "");
         input = input.substring(0, input.lastIndexOf("</p>") - 1);
       }
-      inputQuestionDetail.setValue(CommonUtils.decodeSpecialCharToHTMLnumberIgnore(input));
+      inputQuestionDetail.setValue(StringCommonUtils.decodeSpecialCharToHTMLnumberIgnore(input));
     }
     addChild(inputQuestionContent);
     addChild(inputQuestionDetail);
@@ -363,11 +363,11 @@ public class UIQuestionForm extends BaseUIFAQForm implements UIPopupComponent {
       initPage();
       
       if(mapLanguage.containsKey(this.editLanguage)){
-        inputQuestionDetail.setValue(CommonUtils.decodeSpecialCharToHTMLnumberIgnore(mapLanguage.get(editLanguage).getDetail()));
-        inputQuestionContent.setValue(CommonUtils.decodeSpecialCharToHTMLnumber(mapLanguage.get(editLanguage).getQuestion()));        
+        inputQuestionDetail.setValue(StringCommonUtils.decodeSpecialCharToHTMLnumberIgnore(mapLanguage.get(editLanguage).getDetail()));
+        inputQuestionContent.setValue(StringCommonUtils.decodeSpecialCharToHTMLnumber(mapLanguage.get(editLanguage).getQuestion()));        
       }else{
-        inputQuestionDetail.setValue(CommonUtils.decodeSpecialCharToHTMLnumberIgnore(question_.getDetail()));
-        inputQuestionContent.setValue(CommonUtils.decodeSpecialCharToHTMLnumber(question_.getQuestion()));
+        inputQuestionDetail.setValue(StringCommonUtils.decodeSpecialCharToHTMLnumberIgnore(question_.getDetail()));
+        inputQuestionContent.setValue(StringCommonUtils.decodeSpecialCharToHTMLnumber(question_.getQuestion()));
       }
     } catch (Exception e) {
       log.error("Set question is fall, exception: " + e.getMessage());
@@ -564,7 +564,7 @@ public class UIQuestionForm extends BaseUIFAQForm implements UIPopupComponent {
         }
         //--- Sanitize HTML content to avoid XSS injection
         questionDetail = HTMLSanitizer.sanitize(questionDetail);
-        questionContent = CommonUtils.encodeSpecialCharInTitle(questionContent);
+        questionContent = StringCommonUtils.encodeSpecialCharForSimpleInput(questionContent);
 
         Question question = questionForm.getQuestion();
         if(questionForm.questionId_ == null || questionForm.questionId_.trim().length() < 1) { //Add new question

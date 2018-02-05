@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.Random;
 
 import org.apache.commons.io.FileUtils;
+
+import org.exoplatform.commons.utils.StringCommonUtils;
 import org.exoplatform.faq.base.FAQServiceBaseTestCase;
 import org.exoplatform.faq.service.Answer;
 import org.exoplatform.faq.service.Category;
@@ -429,19 +431,19 @@ public class FAQServiceTestCase extends FAQServiceBaseTestCase {
     assertEquals(5, listQuickSearch.size());
     
     Question question6 = createQuestion(categoryId1);
-    question6.setQuestion(CommonUtils.encodeSpecialCharInTitle("()*& test"));
+    question6.setQuestion(StringCommonUtils.encodeSpecialCharForSimpleInput("()*& test"));
     faqService_.saveQuestion(question6, true, faqSetting_);
     
-    String text = CommonUtils.encodeSpecialCharInTitle("()*& test");
+    String text = StringCommonUtils.encodeSpecialCharForSimpleInput("()*& test");
     eventQuery.setText(text);
     listQuickSearch = faqService_.getSearchResults(eventQuery);
     assertEquals(1, listQuickSearch.size());
     
     Question question7 = createQuestion(categoryId1);
-    question7.setDetail(CommonUtils.encodeSpecialCharInSearchTerm("&#<>[]/:?\"'=.,*$%()\\+@!^*-}{;`~_"));
+    question7.setDetail(StringCommonUtils.encodeSpecialCharInSearchTerm("&#<>[]/:?\"'=.,*$%()\\+@!^*-}{;`~_"));
     faqService_.saveQuestion(question7, true, faqSetting_);
     
-    text = CommonUtils.encodeSpecialCharInSearchTerm("&#<>[]/:?\"'=.,*$%()\\+@!^*-}{;`~_");
+    text = StringCommonUtils.encodeSpecialCharInSearchTerm("&#<>[]/:?\"'=.,*$%()\\+@!^*-}{;`~_");
     eventQuery.setText(text);
     listQuickSearch = faqService_.getSearchResults(eventQuery);
     assertEquals(1, listQuickSearch.size());
