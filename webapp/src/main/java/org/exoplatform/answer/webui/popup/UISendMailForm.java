@@ -27,11 +27,11 @@ import org.exoplatform.answer.webui.BaseUIFAQForm;
 import org.exoplatform.answer.webui.FAQUtils;
 import org.exoplatform.answer.webui.UIAnswersPortlet;
 import org.exoplatform.answer.webui.UIQuestions;
+import org.exoplatform.commons.utils.StringCommonUtils;
 import org.exoplatform.container.component.ComponentPlugin;
 import org.exoplatform.faq.service.Answer;
 import org.exoplatform.faq.service.Question;
 import org.exoplatform.faq.service.QuestionLanguage;
-import org.exoplatform.forum.common.CommonUtils;
 import org.exoplatform.forum.common.EmailNotifyPlugin;
 import org.exoplatform.forum.common.webui.BaseEventListener;
 import org.exoplatform.forum.common.webui.UIPopupAction;
@@ -201,7 +201,7 @@ public class UISendMailForm extends BaseUIFAQForm implements UIPopupComponent {
     UIFormRichtextInput filedMessage = new UIFormRichtextInput(FILED_MESSAGE, FILED_MESSAGE, "");
     filedMessage.setIgnoreParserHTML(true).setIsPasteAsPlainText(true)
                 .setToolbar(UIFormRichtextInput.FAQ_TOOLBAR);
-    filedMessage.setValue(CommonUtils.decodeSpecialCharToHTMLnumber(stringBuffer.toString()))
+    filedMessage.setValue(StringCommonUtils.decodeSpecialCharToHTMLnumber(stringBuffer.toString()))
                 .addValidator(MandatoryValidator.class);
     addChild(filedMessage);
   }

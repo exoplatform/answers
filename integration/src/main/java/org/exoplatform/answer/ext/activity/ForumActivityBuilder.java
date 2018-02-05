@@ -19,7 +19,8 @@ package org.exoplatform.answer.ext.activity;
 import java.util.Map;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.exoplatform.forum.common.CommonUtils;
+
+import org.exoplatform.commons.utils.StringCommonUtils;
 import org.exoplatform.forum.common.TransformHTML;
 import org.exoplatform.forum.service.Topic;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
@@ -68,7 +69,7 @@ public class ForumActivityBuilder {
   }
 
   public static String decodeHTMLInput(String message) {
-    message = CommonUtils.decodeSpecialCharToHTMLnumber(message);
+    message = StringCommonUtils.decodeSpecialCharToHTMLnumber(message);
     String[] tab = TransformHTML.getPlainText(message).replaceAll("(?m)^\\s*$[\n\r]{1,}", "").split("\\r?\\n");
     StringBuilder sb = new StringBuilder();
     for (int i=0; i<tab.length; i++) {

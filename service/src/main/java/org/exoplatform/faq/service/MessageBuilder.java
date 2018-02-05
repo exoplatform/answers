@@ -17,7 +17,9 @@
 package org.exoplatform.faq.service;
 
 import org.apache.commons.lang.StringUtils;
+
 import org.exoplatform.commons.utils.CommonsUtils;
+import org.exoplatform.commons.utils.StringCommonUtils;
 import org.exoplatform.forum.common.CommonUtils;
 import org.exoplatform.services.mail.Message;
 
@@ -185,7 +187,7 @@ public class MessageBuilder implements FAQNodeTypes {
     Message message = new Message();
     message.setMimeType(MIMETYPE_TEXTHTML);
     message.setFrom(questionOwner);
-    message.setSubject(CommonUtils.decodeSpecialCharToHTMLnumber(subject + ": " + questionContent));
+    message.setSubject(StringCommonUtils.decodeSpecialCharToHTMLnumber(subject + ": " + questionContent));
     message.setBody(getBody());
     return message;
   }

@@ -1,15 +1,16 @@
 package org.exoplatform.answer.ext.impl;
 
 import org.exoplatform.answer.ext.activity.ForumActivityBuilder;
+import org.exoplatform.commons.utils.CommonsUtils;
+import org.exoplatform.commons.utils.StringCommonUtils;
+import org.exoplatform.faq.service.Category;
+import org.exoplatform.faq.service.FAQService;
 import org.exoplatform.faq.service.Question;
 import org.exoplatform.faq.service.Utils;
 import org.exoplatform.forum.common.CommonUtils;
-import org.exoplatform.social.core.space.SpaceUtils;
-import org.exoplatform.commons.utils.CommonsUtils;
-import org.exoplatform.faq.service.Category;
-import org.exoplatform.faq.service.FAQService;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
+import org.exoplatform.social.core.space.SpaceUtils;
 
 public class ActivityUtils {
   private static final Log LOG = ExoLogger.getLogger(ActivityUtils.class);
@@ -38,7 +39,7 @@ public class ActivityUtils {
   }
   
   public static String processContent(String content) {
-    content = CommonUtils.processBBCode(CommonUtils.decodeSpecialCharToHTMLnumberIgnore(content));
+    content = CommonUtils.processBBCode(StringCommonUtils.decodeSpecialCharToHTMLnumberIgnore(content));
     content = ForumActivityBuilder.getFourFirstLines(content);
     return content;
   }

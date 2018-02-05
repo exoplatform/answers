@@ -25,6 +25,7 @@ import java.util.Map;
 import org.exoplatform.answer.rendering.RenderHelper;
 import org.exoplatform.answer.webui.FAQUtils;
 import org.exoplatform.answer.webui.popup.UIViewUserProfile;
+import org.exoplatform.commons.utils.StringCommonUtils;
 import org.exoplatform.faq.service.CategoryInfo;
 import org.exoplatform.faq.service.FAQService;
 import org.exoplatform.faq.service.Question;
@@ -156,7 +157,7 @@ public class UIViewer extends UIContainer {
     public void execute(Event<UIViewer> event) throws Exception {
       UIViewer viewer = event.getSource();
       String userId = event.getRequestContext().getRequestParameter(OBJECTID);
-      userId = CommonUtils.decodeSpecialCharToHTMLnumber(userId);
+      userId = StringCommonUtils.decodeSpecialCharToHTMLnumber(userId);
       User user = UserHelper.getUserByUserId(userId);
       UIFAQPortlet portlet = viewer.getParent();
       if (user != null) {

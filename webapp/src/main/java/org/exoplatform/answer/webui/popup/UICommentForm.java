@@ -24,6 +24,7 @@ import org.exoplatform.answer.webui.UIAnswersPortlet;
 import org.exoplatform.answer.webui.UIQuestions;
 import org.exoplatform.answer.webui.ValidatorDataInput;
 import org.exoplatform.commons.utils.HTMLSanitizer;
+import org.exoplatform.commons.utils.StringCommonUtils;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.faq.service.Comment;
 import org.exoplatform.faq.service.FAQSetting;
@@ -42,8 +43,8 @@ import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.UIPopupComponent;
 import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
 import org.exoplatform.webui.event.Event;
-import org.exoplatform.webui.event.EventListener;
 import org.exoplatform.webui.event.Event.Phase;
+import org.exoplatform.webui.event.EventListener;
 import org.exoplatform.webui.form.UIFormRichtextInput;
 import org.exoplatform.webui.form.validator.MandatoryValidator;
 
@@ -129,7 +130,7 @@ public class UICommentForm extends BaseUIFAQForm implements UIPopupComponent {
     FAQUtils.getEmailSetting(faqSetting_, false, false);
     if (commentId.indexOf("new") < 0) {
       comment = getFAQService().getCommentById(question.getPath(), commentId, language);
-      getUIFormRichtextInput(COMMENT_CONTENT).setValue(CommonUtils.decodeSpecialCharToHTMLnumberIgnore(comment.getComments()));
+      getUIFormRichtextInput(COMMENT_CONTENT).setValue(StringCommonUtils.decodeSpecialCharToHTMLnumberIgnore(comment.getComments()));
       this.author = comment.getCommentBy();
     } else {
       this.author = null;

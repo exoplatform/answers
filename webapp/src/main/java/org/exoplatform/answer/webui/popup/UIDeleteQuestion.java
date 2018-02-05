@@ -19,10 +19,10 @@ package org.exoplatform.answer.webui.popup;
 import org.exoplatform.answer.webui.UIAnswersContainer;
 import org.exoplatform.answer.webui.UIAnswersPortlet;
 import org.exoplatform.answer.webui.UIQuestions;
+import org.exoplatform.commons.utils.StringCommonUtils;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.faq.service.FAQService;
 import org.exoplatform.faq.service.Question;
-import org.exoplatform.forum.common.CommonUtils;
 import org.exoplatform.forum.common.webui.UIPopupAction;
 import org.exoplatform.forum.common.webui.UIPopupContainer;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
@@ -59,7 +59,7 @@ public class UIDeleteQuestion extends UIForm implements UIPopupComponent {
   }
 
   protected String getAuthor() {
-    return CommonUtils.decodeSpecialCharToHTMLnumber(question_.getAuthor());
+    return StringCommonUtils.decodeSpecialCharToHTMLnumber(question_.getAuthor());
   }
 
   protected String getEmail() {
@@ -67,7 +67,7 @@ public class UIDeleteQuestion extends UIForm implements UIPopupComponent {
   }
 
   protected String getQuestion() {
-    return CommonUtils.decodeSpecialCharToHTMLnumber(question_.getQuestion());
+    return StringCommonUtils.decodeSpecialCharToHTMLnumber(question_.getQuestion());
   }
 
   public void setIsManagement(boolean isManagement) {
