@@ -178,7 +178,7 @@ public class MessageBuilder implements FAQNodeTypes {
     }
     body = StringUtils.replace(body, "&questionLink_", questionLink);
     body = StringUtils.replace(body, "&answerNowLink_", questionLink + Utils.ANSWER_NOW + "true");
-    return StringUtils.replace(body, "&", "&amp;");
+    return StringCommonUtils.encodeSpecialCharInHTML(subject + ": " + questionContent);
   }
 
   public Message getMessage() {
