@@ -17,6 +17,7 @@
 package org.exoplatform.faq.service;
 
 import org.apache.commons.lang.StringUtils;
+import org.exoplatform.commons.utils.StringCommonUtils;
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.forum.common.CommonUtils;
 import org.exoplatform.services.mail.Message;
