@@ -9,6 +9,9 @@
   <artifactId>answers-services</artifactId>
   <packaging>jar</packaging>
   <name>eXo Add-on:: FAQ service</name>
+  <properties>
+    <exo.test.coverage.ratio>0.62</exo.test.coverage.ratio>
+  </properties>
   <dependencies>
     <dependency>
       <groupId>org.exoplatform.commons</groupId>
