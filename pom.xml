@@ -32,7 +32,7 @@
   <artifactId>answers-parent</artifactId>
   <version>2.2.x-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>eXo Add-on:: Answers</name>
+  <name>Answers</name>
   <description>Answers add-on</description>
 
   <scm>
